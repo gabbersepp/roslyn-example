@@ -7,7 +7,8 @@ namespace TestProject
         static void Main(string[] args)
         {
             var number = 5 * 5;
-            Console.WriteLine("Number: " + number.ToString());
+            var number2 = number * number;
+            Console.WriteLine("Number: " + number);
         }
     }
 }

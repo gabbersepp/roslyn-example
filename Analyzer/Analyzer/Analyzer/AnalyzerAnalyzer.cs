@@ -26,7 +26,12 @@ namespace Analyzer
 
         private void VerifyAction(SyntaxNodeAnalysisContext obj)
         {
-            obj.ReportDiagnostic(Diagnostic.Create(Rule, obj.Node.GetLocation()));
+            var expr = (BinaryExpressionSyntax)obj.Node;
+
+            if (expr.Left is LiteralExpressionSyntax && expr.Right is LiteralExpressionSyntax)
+            {
+                obj.ReportDiagnostic(Diagnostic.Create(Rule, obj.Node.GetLocation()));
+            }
         }
 
         private static DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: Description);

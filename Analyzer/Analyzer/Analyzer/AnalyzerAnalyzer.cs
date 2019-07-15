@@ -14,6 +14,8 @@ namespace Analyzer
     public class AnalyzerAnalyzer : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "hopefullyunique";
+        public const string DiagnosticId2 = "hopefullyunique2";
+
         private const string Title = "numbers can be multiplicated on your own you noob and use string interpolation";
         private const string MessageFormat = "noob + string interpolation";
         private const string Description = "Fix it fast";
@@ -22,6 +24,19 @@ namespace Analyzer
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterSyntaxNodeAction(VerifyAction, SyntaxKind.MultiplyExpression);
+            context.RegisterSyntaxNodeAction(VerifyInterpolatedAction, SyntaxKind.AddExpression);
+        }
+
+        private void VerifyInterpolatedAction(SyntaxNodeAnalysisContext obj)
+        {
+            var expr = (BinaryExpressionSyntax)obj.Node;
+            var left = expr.Left as LiteralExpressionSyntax;
+            var right = expr.Right as IdentifierNameSyntax;
+
+            if (left != null && right != null)
+            {
+                obj.ReportDiagnostic(Diagnostic.Create(Rule2, obj.Node.GetLocation()));
+            }
         }
 
         private void VerifyAction(SyntaxNodeAnalysisContext obj)
@@ -35,8 +50,9 @@ namespace Analyzer
         }
 
         private static DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: Description);
+        private static DiagnosticDescriptor Rule2 = new DiagnosticDescriptor(DiagnosticId2, Title, MessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: Description);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { return ImmutableArray.Create(Rule); } }
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { return ImmutableArray.Create(Rule, Rule2); } }
 
     }
 }
